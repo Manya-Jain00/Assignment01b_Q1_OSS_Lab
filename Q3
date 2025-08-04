@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORDS 1000
+#define MAX_LEN 1000
+
+// Structure to store word and its frequency
+struct WordFreq {
+    char word[50];
+    int count;
+};
+
+// Convert a string to lowercase
+void toLowerCase(char *str) {
+    for (int i = 0; str[i]; i++)
+        str[i] = tolower(str[i]);
+}
+
+int main() {
+    char paragraph[MAX_LEN];
+    struct WordFreq wordList[MAX_WORDS];
+    int wordCount = 0;
+
+    printf("Enter a paragraph:\n");
+    fgets(paragraph, sizeof(paragraph), stdin);
+
+    // Replace punctuation with space
+    for (int i = 0; paragraph[i]; i++) {
+        if (ispunct(paragraph[i]))
+            paragraph[i] = ' ';
+    }
+
+    // Split paragraph into words
+    char *token = strtok(paragraph, " \n\t");
+    while (token != NULL) {
+        toLowerCase(token);
+
+        int found = 0;
+        for (int i = 0; i < wordCount; i++) {
+            if (strcmp(wordList[i].word, token) == 0) {
+                wordList[i].count++;
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            strcpy(wordList[wordCount].word, token);
+            wordList[wordCount].count = 1;
+            wordCount++;
+        }
+
+        token = strtok(NULL, " \n\t");
+    }
+
+    // Print frequencies
+    printf("\nWord Frequencies:\n");
+    for (int i = 0; i < wordCount; i++) {
+        printf("%s: %d\n", wordList[i].word, wordList[i].count);
+    }
+
+    return 0;
+}
